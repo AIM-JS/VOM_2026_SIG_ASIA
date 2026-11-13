@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SIGGRAPH Asia 2026 내 시간표</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  /* Layout: graph-paper week grid, 1 fine line = 5 minutes; overlaps drawn as hatched bands across the shared minutes */
+  --bg: #e8ecf0;
+  --sheet: #fbfcfd;
+  --ink: #142030;
+  --muted: #586579;
+  --accent: #2346c9;
+  --conflict: #d23f29;
+  --tight: #a86d12;
+  --ok: #2a7748;
+  --block: #e6ebfb;
+  --block-maybe: #f7f9ff;
+  --border: rgba(20, 32, 48, .13);
+  --grid-fine: rgba(35, 70, 201, .07);
+  --grid-quarter: rgba(35, 70, 201, .15);
+  --grid-hour: rgba(20, 32, 48, .28);
+  --font-display: "Bricolage Grotesque", "IBM Plex Sans KR", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1218;
+    --sheet: #131a23;
+    --ink: #e3e8ef;
+    --muted: #8e9aab;
+    --accent: #8aa4ff;
+    --conflict: #ff6e57;
+    --tight: #e2aa4c;
+    --ok: #5cc28a;
+    --block: #1d2944;
+    --block-maybe: #161f30;
+    --border: rgba(227, 232, 239, .14);
+    --grid-fine: rgba(138, 164, 255, .06);
+    --grid-quarter: rgba(138, 164, 255, .13);
+    --grid-hour: rgba(227, 232, 239, .26);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1218;
+  --sheet: #131a23;
+  --ink: #e3e8ef;
+  --muted: #8e9aab;
+  --accent: #8aa4ff;
+  --conflict: #ff6e57;
+  --tight: #e2aa4c;
+  --ok: #5cc28a;
+  --block: #1d2944;
+  --block-maybe: #161f30;
+  --border: rgba(227, 232, 239, .14);
+  --grid-fine: rgba(138, 164, 255, .06);
+  --grid-quarter: rgba(138, 164, 255, .13);
+  --grid-hour: rgba(227, 232, 239, .26);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.45;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.wrap { max-width: 1240px; margin: 0 auto; padding: 28px 20px 48px; display: grid; gap: 20px; }
+
+/* Header */
+.top { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 32px; }
+.eyebrow { margin: 0 0 6px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .04em; color: var(--muted); }
+h1 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: clamp(28px, 4vw, 40px); line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
+h1 .tick { font-family: var(--font-mono); font-weight: 500; font-size: .42em; color: var(--accent); vertical-align: .55em; margin-left: 6px; letter-spacing: 0; }
+.sub { margin: 8px 0 0; color: var(--muted); max-width: 60ch; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; }
+.stat { display: grid; gap: 2px; padding: 8px 14px; border-radius: 10px; background: var(--sheet); border: 1px solid var(--border); min-width: 96px; }
+.stat b { font-family: var(--font-mono); font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat span { font-size: 12px; color: var(--muted); }
+.stat.is-conflict b { color: var(--conflict); }
+.stat.is-tight b { color: var(--tight); }
+.stat.is-ok b { color: var(--ok); }
+
+/* Conflict panel */
+.panel { background: var(--sheet); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: grid; gap: 10px; }
+.panel h2 { margin: 0; font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+.panel h2 small { font-weight: 400; color: var(--muted); font-size: 12px; }
+.cf-list { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); }
+.cf { border: 1px solid var(--border); border-left: 4px solid var(--conflict); border-radius: 8px; padding: 10px 12px; display: grid; gap: 8px; }
+.cf.resolved { border-left-color: var(--ok); }
+.cf.tight { border-left-color: var(--tight); }
+.cf-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font-size: 13px; }
+.cf-when { font-family: var(--font-mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.pill { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; white-space: nowrap; }
+.pill.conflict { background: color-mix(in srgb, var(--conflict) 14%, transparent); color: var(--conflict); }
+.pill.ok { background: color-mix(in srgb, var(--ok) 14%, transparent); color: var(--ok); }
+.pill.tight { background: color-mix(in srgb, var(--tight) 16%, transparent); color: var(--tight); }
+.cf-opts { display: grid; grid-template-columns: 1fr auto 1fr; gap: 6px; align-items: stretch; }
+.cf-vs { align-self: center; font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.cf-opt { text-align: left; border: 1px solid var(--border); background: transparent; border-radius: 6px; padding: 6px 8px; display: grid; gap: 2px; font-size: 12.5px; line-height: 1.3; }
+.cf-opt:hover { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, transparent); }
+.cf-opt .t { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+.cf-opt.kept { border-color: var(--ok); }
+.cf-opt.dropped { opacity: .5; text-decoration: line-through; }
+.cf-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; font-size: 12px; }
+.empty { color: var(--muted); font-size: 13px; margin: 0; }
+
+/* Toolbar */
+.toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; }
+.btn { border: 1px solid var(--border); background: var(--sheet); border-radius: 8px; padding: 7px 12px; font-weight: 500; }
+.btn:hover { border-color: var(--accent); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--sheet); font-weight: 600; }
+.btn.danger { color: var(--conflict); }
+.check { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; cursor: pointer; }
+.legend { margin-left: auto; display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted); }
+.legend i { display: inline-block; width: 18px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 5px; }
+.lg-go { background: var(--block); border: 1px solid var(--border); border-left: 3px solid var(--accent); }
+.lg-maybe { background: var(--block-maybe); border: 1px dashed var(--accent); }
+.lg-skip { background: var(--block-maybe); opacity: .5; border: 1px solid var(--border); }
+.lg-hatch { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--conflict) 45%, transparent) 0 2px, transparent 2px 5px); border: 1px solid var(--conflict); }
+.lg-tight { border-top: 2px dashed var(--tight); height: 0 !important; border-radius: 0 !important; vertical-align: 3px !important; }
+
+/* Calendar */
+.cal-scroll { border-radius: 12px; }
+.cal { display: grid; grid-template-columns: 58px repeat(4, minmax(0, 1fr)); background: var(--sheet); border: 1px solid var(--border); border-radius: 12px; }
+.cal-head { position: sticky; top: 0; z-index: 20; background: var(--sheet); border-bottom: 1px solid var(--grid-hour); padding: 10px 10px 8px; display: grid; gap: 1px; }
+.cal-head:first-child { border-top-left-radius: 12px; }
+.cal-head:last-child { border-top-right-radius: 12px; }
+.cal-head + .cal-head { border-left: 1px solid var(--border); }
+.cal-head .d { font-family: var(--font-display); font-weight: 700; font-size: 18px; display: flex; align-items: baseline; gap: 8px; }
+.cal-head .d .n { font-family: var(--font-mono); font-weight: 500; font-size: 13px; color: var(--muted); }
+.cal-head .meta { font-size: 12px; color: var(--muted); }
+.cal-head .meta .bad { color: var(--conflict); font-weight: 600; }
+.cal-head.today .d::after { content: "오늘"; font-family: var(--font-body); font-size: 11px; font-weight: 700; color: var(--sheet); background: var(--conflict); padding: 1px 6px; border-radius: 4px; }
+
+.axis { position: relative; border-right: 1px solid var(--border); }
+.axis .lab { position: absolute; right: 8px; transform: translateY(-50%); font-family: var(--font-mono); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--muted); }
+.axis .lab.h { font-weight: 600; color: var(--ink); font-size: 12px; }
+.axis .lab.first { transform: translateY(2px); }
+
+.daycol {
+  position: relative;
+  border-left: 1px solid var(--border);
+  background-image:
+    linear-gradient(to bottom, var(--grid-hour) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-quarter) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-fine) 1px, transparent 1px);
+  background-size: 100% 120px, 100% 30px, 100% 10px;
+  cursor: crosshair;
+}
+.axis + .daycol { border-left: 0; }
+.daycol.today { background-color: color-mix(in srgb, var(--accent) 4%, transparent); }
+
+.blk {
+  position: absolute;
+  z-index: 2;
+  border: 0;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: var(--block);
+  padding: 4px 7px 4px 8px;
+  text-align: left;
+  overflow: hidden;
+  display: flex; flex-direction: column; gap: 1px;
+  box-shadow: 0 1px 0 var(--border);
+  cursor: pointer;
+}
+.blk:hover { box-shadow: 0 0 0 1.5px var(--accent); z-index: 6; }
+.blk .tm { font-family: var(--font-mono); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--muted); white-space: nowrap; }
+.blk .tm em { font-style: normal; opacity: .8; }
+.blk .ti { font-size: 12.5px; font-weight: 600; line-height: 1.25; overflow-wrap: anywhere; }
+.blk .me { font-size: 11px; color: var(--muted); line-height: 1.25; }
+.blk.maybe { background: var(--block-maybe); border: 1px dashed var(--accent); border-left: 3px dashed var(--accent); }
+.blk.maybe .ti::after { content: " · 고민 중"; font-weight: 400; color: var(--muted); font-size: 11px; }
+.blk.skip { background: transparent; border: 1px solid var(--border); border-left: 3px solid var(--border); opacity: .55; }
+.blk.skip .ti { text-decoration: line-through; font-weight: 500; }
+.blk.clash { border-left-color: var(--conflict); }
+.blk.compact .me { display: none; }
+
+.band {
+  position: absolute; left: 0; right: 0; z-index: 4; pointer-events: none;
+  background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--conflict) 26%, transparent) 0 2px, transparent 2px 8px);
+  border-top: 1.5px solid var(--conflict);
+  border-bottom: 1.5px solid var(--conflict);
+}
+.band .tag {
+  position: absolute; right: 4px; bottom: 3px;
+  font-size: 11px; font-weight: 700; color: #fff; background: var(--conflict);
+  padding: 1px 6px; border-radius: 4px; white-space: nowrap;
+}
+.tightline { position: absolute; left: 0; right: 0; z-index: 5; height: 0; border-top: 2px dashed var(--tight); pointer-events: none; }
+.tightline .tag { position: absolute; right: 4px; top: -21px; font-size: 11px; font-weight: 700; color: var(--tight); background: var(--sheet); border: 1px solid var(--tight); padding: 0 5px; border-radius: 4px; white-space: nowrap; }
+
+.hover-line { position: absolute; left: 0; right: 0; height: 0; border-top: 1px solid var(--accent); z-index: 8; pointer-events: none; }
+.hover-line span { position: absolute; left: 4px; top: -18px; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--sheet); background: var(--accent); padding: 0 5px; border-radius: 3px; }
+.now-line { position: absolute; left: -4px; right: 0; height: 0; border-top: 2px solid var(--conflict); z-index: 9; pointer-events: none; }
+.now-line::before { content: ""; position: absolute; left: -1px; top: -6px; width: 10px; height: 10px; border-radius: 50%; background: var(--conflict); }
+
+.hint { font-size: 12px; color: var(--muted); margin: 0; }
+
+/* Modal */
+.backdrop { position: fixed; inset: 0; background: rgba(8, 12, 18, .45); display: none; align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+.backdrop.open { display: flex; }
+.modal { background: var(--sheet); color: var(--ink); border: 1px solid var(--border); border-radius: 14px; width: min(460px, 100%); max-height: calc(100% - 32px); overflow: auto; padding: 18px; display: grid; gap: 14px; box-shadow: 0 20px 50px rgba(0,0,0,.25); }
+.modal h3 { margin: 0; font-family: var(--font-display); font-size: 20px; }
+.field { display: grid; gap: 4px; }
+.field > label, .field > .lbl { font-size: 12px; font-weight: 600; color: var(--muted); }
+.field input[type=text], .field select, .field textarea { width: 100%; border: 1px solid var(--border); background: var(--bg); border-radius: 8px; padding: 8px 10px; }
+.field textarea { min-height: 180px; font-family: var(--font-mono); font-size: 12px; }
+.row3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 10px; }
+.seg { display: flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.seg label { flex: 1; text-align: center; padding: 7px 4px; font-size: 13px; cursor: pointer; border-left: 1px solid var(--border); }
+.seg label:first-child { border-left: 0; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg label:has(input:checked) { background: var(--accent); color: var(--sheet); font-weight: 600; }
+.seg label:has(input:focus-visible) { outline: 2px solid var(--accent); outline-offset: -2px; }
+.dur { font-family: var(--font-mono); font-size: 12px; color: var(--muted); }
+.err { color: var(--conflict); font-size: 12.5px; margin: 0; min-height: 1em; }
+.actions { display: flex; gap: 8px; justify-content: flex-end; align-items: center; flex-wrap: wrap; }
+.actions .spacer { flex: 1; }
+
+@media (max-width: 760px) {
+  .wrap { padding: 20px 16px 40px; }
+  .cal-scroll { overflow-x: auto; }
+  .cal { min-width: 700px; }
+  .legend { margin-left: 0; }
+  .cf-list { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">SIGGRAPH ASIA 2026 · 12월 1–4일 · KLCC, KUALA LUMPUR</p>
+      <h1>내 세션 시간표<span class="tick">1칸 = 5분</span></h1>
+      <p class="sub">빗금 친 구간이 시간이 겹치는 부분이에요. 세션을 누르면 수정하고, 빈 칸을 누르면 그 시각에 새 세션을 추가할 수 있어요.</p>
+    </div>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <section class="panel" id="conflictPanel" aria-live="polite"></section>
+
+  <div class="toolbar">
+    <button class="btn primary" id="addBtn" type="button">+ 세션 추가</button>
+    <label class="check" for="hideSkip"><input type="checkbox" id="hideSkip"> 안 갈 세션 숨기기</label>
+    <button class="btn" id="dataBtn" type="button">백업 · 복원</button>
+    <div class="legend" aria-hidden="true">
+      <span><i class="lg-go"></i>들을 것</span>
+      <span><i class="lg-maybe"></i>고민 중</span>
+      <span><i class="lg-skip"></i>안 감</span>
+      <span><i class="lg-hatch"></i>겹침</span>
+      <span><i class="lg-tight"></i>이동 10분 미만</span>
+    </div>
+  </div>
+
+  <div class="cal-scroll"><div class="cal" id="cal"></div></div>
+  <p class="hint">시간은 현지(쿠알라룸푸르, UTC+8) 기준이에요. 학회 기간에는 오늘 열과 현재 시각 선이 표시돼요. 수정 내용은 이 브라우저에 저장돼요.</p>
+</div>
+
+<div class="backdrop" id="editBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <h3 id="editTitle">세션 수정</h3>
+    <div class="field">
+      <label for="fTitle">세션 이름</label>
+      <input type="text" id="fTitle" autocomplete="off">
+    </div>
+    <div class="row3">
+      <div class="field"><label for="fDay">날짜</label><select id="fDay"></select></div>
+      <div class="field"><label for="fStart">시작</label><select id="fStart"></select></div>
+      <div class="field"><label for="fEnd">끝</label><select id="fEnd"></select></div>
+    </div>
+    <span class="dur" id="fDur"></span>
+    <div class="field">
+      <span class="lbl" id="statusLbl">상태</span>
+      <div class="seg" role="radiogroup" aria-labelledby="statusLbl">
+        <label for="stGo"><input type="radio" name="st" id="stGo" value="go">들을 것</label>
+        <label for="stMaybe"><input type="radio" name="st" id="stMaybe" value="maybe">고민 중</label>
+        <label for="stSkip"><input type="radio" name="st" id="stSkip" value="skip">안 감</label>
+      </div>
+    </div>
+    <div class="field">
+      <label for="fMemo">장소 · 메모</label>
+      <input type="text" id="fMemo" placeholder="예: Hall 3, 앞자리" autocomplete="off">
+    </div>
+    <p class="err" id="fErr"></p>
+    <div class="actions">
+      <button class="btn danger" id="delBtn" type="button">삭제</button>
+      <span class="spacer"></span>
+      <button class="btn" id="cancelBtn" type="button">취소</button>
+      <button class="btn primary" id="saveBtn" type="button">저장</button>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="dataBackdrop">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="dataTitle">
+    <h3 id="dataTitle">백업 · 복원</h3>
+    <p class="hint">아래 내용을 복사해 두면 다른 기기에서 붙여넣어 그대로 불러올 수 있어요.</p>
+    <div class="field">
+      <label for="dataText">시간표 데이터 (JSON)</label>
+      <textarea id="dataText" spellcheck="false"></textarea>
+    </div>
+    <p class="err" id="dataMsg"></p>
+    <div class="actions">
+      <button class="btn danger" id="resetBtn" type="button">처음 시간표로 되돌리기</button>
+      <span class="spacer"></span>
+      <button class="btn" id="copyBtn" type="button">복사</button>
+      <button class="btn primary" id="applyBtn" type="button">붙여넣은 내용 적용</button>
+      <button class="btn" id="dataClose" type="button">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const PPM = 2; // pixels per minute; 5 min = 10px
+  const DAYS = [
+    { label: '화', date: '12.1', iso: '2026-12-01' },
+    { label: '수', date: '12.2', iso: '2026-12-02' },
+    { label: '목', date: '12.3', iso: '2026-12-03' },
+    { label: '금', date: '12.4', iso: '2026-12-04' }
+  ];
+  const KEY = 'sa26-my-schedule-v1';
+  const STATUS = { go: '들을 것', maybe: '고민 중', skip: '안 감' };
+
+  const toMin = s => { const [h, m] = s.split(':').map(Number); return h * 60 + m; };
+  const fmt = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
+  const durTxt = m => (m >= 60 ? Math.floor(m / 60) + '시간 ' + (m % 60 ? (m % 60) + '분' : '') : m + '분').trim();
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+  const RAW = [
+    [0, '09:00', '10:05', 'Technical Papers Fast Forward', 'go'],
+    [0, '13:10', '14:15', 'Points And Surfaces', 'go'],
+    [0, '14:50', '15:55', 'Generative Video And Editing', 'maybe'],
+    [0, '16:30', '17:35', 'Monte Carlo Rendering', 'maybe'],
+    [1, '09:00', '10:20', 'Technical Papers Best Paper Session', 'go'],
+    [1, '11:15', '12:30', 'Emerging Technologies Talk 2', 'go'],
+    [1, '12:45', '13:50', 'Emerging Technologies Talk 1', 'go'],
+    [1, '13:10', '14:15', 'Differentiable And Inverse Rendering', 'go'],
+    [1, '14:50', '15:55', '3D Imaging And Reconstruction', 'go'],
+    [1, '16:30', '17:35', 'Textures, Reconstructions And Characters', 'go'],
+    [2, '09:00', '10:05', 'Geometry And Topology', 'go'],
+    [2, '10:40', '11:45', 'Applications of Gaussian Splatting', 'go'],
+    [2, '10:40', '11:45', 'Mesh Reconstruction And Deformation', 'go'],
+    [2, '13:10', '14:15', 'Technical Papers', 'go'],
+    [2, '14:50', '15:55', 'View Synthesis With Gaussian Splatting', 'go'],
+    [2, '16:30', '17:35', 'Embeddings, Tessellations And Fields', 'go'],
+    [3, '09:00', '10:05', 'Creative Synthesis', 'maybe'],
+    [3, '09:00', '10:20', 'Technical Papers', 'go'],
+    [3, '10:40', '11:45', 'Real-Time Rendering And Neural Representations', 'go'],
+    [3, '13:10', '14:15', 'Technical Papers', 'go'],
+    [3, '14:15', '15:15', 'Generative Synthesis For Video And 3D', 'go']
+  ];
+  const defaults = () => RAW.map((r, i) => ({ id: 's' + (i + 1), day: r[0], start: toMin(r[1]), end: toMin(r[2]), title: r[3], status: r[4], memo: '' }));
+
+  let sessions = [];
+  let hideSkip = false;
+
+  function valid(list) {
+    return Array.isArray(list) && list.every(s => s && typeof s.title === 'string' && Number.isInteger(s.day) && s.day >= 0 && s.day < 4 &&
+      Number.isFinite(s.start) && Number.isFinite(s.end) && s.end > s.start && STATUS[s.status]);
+  }
+  function load() {
+    try { const v = JSON.parse(localStorage.getItem(KEY) || 'null'); if (v && valid(v.sessions)) { hideSkip = !!v.hideSkip; return v.sessions; } } catch (e) {}
+    return null;
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify({ sessions, hideSkip })); } catch (e) {}
+  }
+  const uid = () => 'u' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+
+  /* ---------- analysis ---------- */
+  function analyze() {
+    const conflicts = [], tight = [];
+    for (let d = 0; d < 4; d++) {
+      const ds = sessions.filter(s => s.day === d).sort((a, b) => a.start - b.start || a.end - b.end);
+      for (let i = 0; i < ds.length; i++) for (let j = i + 1; j < ds.length; j++) {
+        const a = ds[i], b = ds[j];
+        const os = Math.max(a.start, b.start), oe = Math.min(a.end, b.end);
+        const as = a.status === 'skip', bs = b.status === 'skip';
+        if (oe > os) {
+          if (as && bs) continue;
+          conflicts.push({ day: d, a, b, start: os, end: oe, mins: oe - os, active: !as && !bs });
+        } else if (!as && !bs) {
+          const gap = b.start - a.end;
+          if (gap >= 0 && gap < 10) tight.push({ day: d, from: a, to: b, gap });
+        }
+      }
+    }
+    return { conflicts, tight };
+  }
+
+  function layoutDay(list) {
+    const items = list.slice().sort((a, b) => a.start - b.start || b.end - a.end);
+    const out = new Map();
+    let cluster = [], clusterEnd = -1, lanesEnd = [];
+    const flush = () => { const n = lanesEnd.length; cluster.forEach(it => { out.get(it.id).lanes = n; }); cluster = []; lanesEnd = []; clusterEnd = -1; };
+    for (const it of items) {
+      if (cluster.length && it.start >= clusterEnd) flush();
+      let lane = lanesEnd.findIndex(e => e <= it.start);
+      if (lane === -1) { lane = lanesEnd.length; lanesEnd.push(it.end); } else lanesEnd[lane] = it.end;
+      out.set(it.id, { lane, lanes: 1 });
+      cluster.push(it);
+      clusterEnd = Math.max(clusterEnd, it.end);
+    }
+    if (cluster.length) flush();
+    return out;
+  }
+
+  function range() {
+    let lo = 9 * 60, hi = 18 * 60;
+    sessions.forEach(s => { lo = Math.min(lo, Math.floor(s.start / 60) * 60); hi = Math.max(hi, Math.ceil(s.end / 60) * 60); });
+    return [lo, hi];
+  }
+
+  function klNow() {
+    try {
+      const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kuala_Lumpur', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+        .formatToParts(new Date()).map(x => [x.type, x.value]));
+      const iso = p.year + '-' + p.month + '-' + p.day;
+      return { day: DAYS.findIndex(d => d.iso === iso), min: Number(p.hour) * 60 + Number(p.minute) };
+    } catch (e) { return { day: -1, min: 0 }; }
+  }
+
+  /* ---------- render ---------- */
+  const $ = id => document.getElementById(id);
+
+  function render() {
+    const { conflicts, tight } = analyze();
+    const active = conflicts.filter(c => c.active);
+    renderStats(active, tight);
+    renderPanel(conflicts, tight);
+    renderCal(active, tight);
+    $('hideSkip').checked = hideSkip;
+  }
+
+  function renderStats(active, tight) {
+    const going = sessions.filter(s => s.status !== 'skip');
+    const mins = going.reduce((t, s) => t + s.end - s.start, 0);
+    const lost = active.reduce((t, c) => t + c.mins, 0);
+    $('stats').innerHTML =
+      `<div class="stat"><b>${going.length}</b><span>들을 세션</span></div>` +
+      `<div class="stat"><b>${Math.floor(mins / 60)}h ${String(mins % 60).padStart(2, '0')}m</b><span>세션 시간 합계</span></div>` +
+      (active.length
+        ? `<div class="stat is-conflict"><b>${active.length}건</b><span>겹침 · ${lost}분</span></div>`
+        : `<div class="stat is-ok"><b>0건</b><span>겹침 없음</span></div>`) +
+      `<div class="stat ${tight.length ? 'is-tight' : ''}"><b>${tight.length}건</b><span>이동 10분 미만</span></div>`;
+  }
+
+  const dayTxt = d => DAYS[d].label + ' ' + DAYS[d].date;
+
+  function renderPanel(conflicts, tight) {
+    const order = (x, y) => (x.active === y.active ? 0 : x.active ? -1 : 1) || x.day - y.day || x.start - y.start;
+    const list = conflicts.slice().sort(order);
+    const nActive = list.filter(c => c.active).length;
+    let html = `<h2>겹치는 세션 <small>${nActive ? '듣고 싶은 쪽을 누르면 다른 쪽은 ‘안 감’으로 바뀌어요' : '지금은 겹치는 세션이 없어요'}</small></h2>`;
+    if (!list.length && !tight.length) {
+      html += `<p class="empty">겹침도, 촉박한 이동도 없어요.</p>`;
+    } else {
+      html += '<div class="cf-list">';
+      list.forEach((c, i) => {
+        const key = c.a.id + '|' + c.b.id;
+        if (c.active) {
+          html += `<div class="cf">
+            <div class="cf-head"><span class="pill conflict">${c.mins}분 겹침</span><span class="cf-when">${dayTxt(c.day)} · ${fmt(c.start)}–${fmt(c.end)}</span></div>
+            <div class="cf-opts">
+              ${optBtn(c.a, key)}<span class="cf-vs">vs</span>${optBtn(c.b, key)}
+            </div></div>`;
+        } else {
+          const kept = c.a.status === 'skip' ? c.b : c.a;
+          const dropped = kept === c.a ? c.b : c.a;
+          html += `<div class="cf resolved">
+            <div class="cf-head"><span class="pill ok">정리됨</span><span class="cf-when">${dayTxt(c.day)} · ${fmt(c.start)}–${fmt(c.end)} · ${c.mins}분</span></div>
+            <div class="cf-opts">
+              <div class="cf-opt kept">${esc(kept.title)}<span class="t">${fmt(kept.start)}–${fmt(kept.end)} · 들음</span></div>
+              <span class="cf-vs">vs</span>
+              <div class="cf-opt dropped">${esc(dropped.title)}<span class="t">${fmt(dropped.start)}–${fmt(dropped.end)}</span></div>
+            </div>
+            <div class="cf-foot"><span></span><button class="linkbtn" type="button" data-undo="${dropped.id}">되돌리기</button></div></div>`;
+        }
+      });
+      tight.forEach(t => {
+        html += `<div class="cf tight">
+          <div class="cf-head"><span class="pill tight">이동 ${t.gap}분</span><span class="cf-when">${dayTxt(t.day)} · ${fmt(t.from.end)}</span></div>
+          <div class="cf-opts">
+            <div class="cf-opt">${esc(t.from.title)}<span class="t">${fmt(t.from.start)}–${fmt(t.from.end)}</span></div>
+            <span class="cf-vs">→</span>
+            <div class="cf-opt">${esc(t.to.title)}<span class="t">${fmt(t.to.start)}–${fmt(t.to.end)}</span></div>
+          </div>
+          <div class="cf-foot"><span>${t.gap === 0 ? '끝나자마자 바로 시작해요. 방이 다르면 앞 세션에서 조금 일찍 나와야 해요.' : '쉬는 시간이 ' + t.gap + '분뿐이에요.'}</span></div></div>`;
+      });
+      html += '</div>';
+    }
+    $('conflictPanel').innerHTML = html;
+  }
+  function optBtn(s, key) {
+    return `<button class="cf-opt" type="button" data-keep="${s.id}" data-pair="${key}">${esc(s.title)}<span class="t">${fmt(s.start)}–${fmt(s.end)}${s.status === 'maybe' ? ' · 고민 중' : ''}</span></button>`;
+  }
+
+  function renderCal(active, tight) {
+    const [lo, hi] = range();
+    const H = (hi - lo) * PPM;
+    const now = klNow();
+    const cal = $('cal');
+    const clashIds = new Set();
+    active.forEach(c => { clashIds.add(c.a.id); clashIds.add(c.b.id); });
+
+    let html = '<div class="cal-head" aria-hidden="true"></div>';
+    DAYS.forEach((d, i) => {
+      const ds = sessions.filter(s => s.day === i && s.status !== 'skip');
+      const nc = active.filter(c => c.day === i).length;
+      html += `<div class="cal-head${now.day === i ? ' today' : ''}"><div class="d">${d.label}<span class="n">${d.date}</span></div>
+        <div class="meta">세션 ${ds.length}개${nc ? ` · <span class="bad">겹침 ${nc}</span>` : ''}</div></div>`;
+    });
+
+    html += `<div class="axis" style="height:${H}px">`;
+    for (let m = lo; m <= hi; m += 30) {
+      const isH = m % 60 === 0;
+      if (m === hi) break;
+      html += `<span class="lab${isH ? ' h' : ''}${m === lo ? ' first' : ''}" style="top:${(m - lo) * PPM}px">${fmt(m)}</span>`;
+    }
+    html += '</div>';
+
+    for (let d = 0; d < 4; d++) {
+      const vis = sessions.filter(s => s.day === d && !(hideSkip && s.status === 'skip'));
+      const lay = layoutDay(vis);
+      html += `<div class="daycol${now.day === d ? ' today' : ''}" data-day="${d}" style="height:${H}px">`;
+      vis.forEach(s => {
+        const L = lay.get(s.id);
+        const top = (s.start - lo) * PPM, h = (s.end - s.start) * PPM - 2;
+        const w = 100 / L.lanes;
+        const cls = ['blk', s.status === 'go' ? '' : s.status, clashIds.has(s.id) ? 'clash' : '', h < 70 ? 'compact' : ''].filter(Boolean).join(' ');
+        html += `<button type="button" class="${cls}" data-id="${s.id}" title="${esc(s.title)} (${fmt(s.start)}–${fmt(s.end)}, ${STATUS[s.status]})"
+          style="top:${top + 1}px;height:${h}px;left:calc(${L.lane * w}% + 3px);width:calc(${w}% - 6px)">
+          <span class="tm">${fmt(s.start)}–${fmt(s.end)} <em>· ${s.end - s.start}분</em></span>
+          <span class="ti">${esc(s.title)}</span>${s.memo ? `<span class="me">${esc(s.memo)}</span>` : ''}</button>`;
+      });
+      active.filter(c => c.day === d).forEach(c => {
+        html += `<div class="band" style="top:${(c.start - lo) * PPM}px;height:${c.mins * PPM}px"><span class="tag">${c.mins}분 겹침</span></div>`;
+      });
+      tight.filter(t => t.day === d).forEach(t => {
+        html += `<div class="tightline" style="top:${(t.to.start - lo) * PPM}px"><span class="tag">이동 ${t.gap}분</span></div>`;
+      });
+      if (now.day === d && now.min >= lo && now.min <= hi) html += `<div class="now-line" style="top:${(now.min - lo) * PPM}px"></div>`;
+      html += '</div>';
+    }
+    cal.innerHTML = html;
+    cal.dataset.lo = lo;
+    cal.dataset.hi = hi;
+  }
+
+  /* ---------- calendar interactions ---------- */
+  const cal = $('cal');
+  let hoverEl = null;
+  function snapAt(col, clientY) {
+    const r = col.getBoundingClientRect();
+    const lo = Number(cal.dataset.lo), hi = Number(cal.dataset.hi);
+    let m = lo + Math.floor((clientY - r.top) / PPM / 5) * 5;
+    return Math.max(lo, Math.min(hi - 5, m));
+  }
+  cal.addEventListener('mousemove', e => {
+    const col = e.target.closest('.daycol');
+    if (!col || e.target.closest('.blk')) { if (hoverEl) { hoverEl.remove(); hoverEl = null; } return; }
+    const m = snapAt(col, e.clientY);
+    if (!hoverEl || hoverEl.parentNode !== col) { if (hoverEl) hoverEl.remove(); hoverEl = document.createElement('div'); hoverEl.className = 'hover-line'; hoverEl.innerHTML = '<span></span>'; col.appendChild(hoverEl); }
+    hoverEl.style.top = (m - Number(cal.dataset.lo)) * PPM + 'px';
+    hoverEl.firstChild.textContent = fmt(m) + ' 추가';
+  });
+  cal.addEventListener('mouseleave', () => { if (hoverEl) { hoverEl.remove(); hoverEl = null; } });
+  cal.addEventListener('click', e => {
+    const b = e.target.closest('.blk');
+    if (b) { openEdit(sessions.find(s => s.id === b.dataset.id)); return; }
+    const col = e.target.closest('.daycol');
+    if (col) {
+      const m = snapAt(col, e.clientY);
+      openEdit(null, { day: Number(col.dataset.day), start: m, end: Math.min(m + 65, 23 * 60 + 55) });
+    }
+  });
+
+  $('conflictPanel').addEventListener('click', e => {
+    const k = e.target.closest('[data-keep]');
+    if (k) {
+      const [x, y] = k.dataset.pair.split('|');
+      const keepId = k.dataset.keep, dropId = keepId === x ? y : x;
+      const drop = sessions.find(s => s.id === dropId), keep = sessions.find(s => s.id === keepId);
+      if (drop) { drop.prev = drop.status; drop.status = 'skip'; }
+      if (keep && keep.status === 'maybe') { keep.prev = keep.status; keep.status = 'go'; }
+      save(); render(); return;
+    }
+    const u = e.target.closest('[data-undo]');
+    if (u) {
+      const s = sessions.find(v => v.id === u.dataset.undo);
+      if (s) { s.status = s.prev && s.prev !== 'skip' ? s.prev : 'maybe'; delete s.prev; }
+      save(); render();
+    }
+  });
+
+  $('hideSkip').addEventListener('change', e => { hideSkip = e.target.checked; save(); render(); });
+
+  /* ---------- edit modal ---------- */
+  let editing = null, lastFocus = null;
+  const times = []; for (let m = 7 * 60; m <= 22 * 60; m += 5) times.push(m);
+  $('fDay').innerHTML = DAYS.map((d, i) => `<option value="${i}">${d.label} ${d.date}</option>`).join('');
+  const timeOpts = times.map(m => `<option value="${m}">${fmt(m)}</option>`).join('');
+  $('fStart').innerHTML = timeOpts; $('fEnd').innerHTML = timeOpts;
+
+  function ensureOpt(sel, m) {
+    if (![...sel.options].some(o => Number(o.value) === m)) { const o = document.createElement('option'); o.value = m; o.textContent = fmt(m); sel.appendChild(o); }
+    sel.value = String(m);
+  }
+  function updDur() {
+    const d = Number($('fEnd').value) - Number($('fStart').value);
+    $('fDur').textContent = d > 0 ? '길이 ' + durTxt(d) + ' (' + d / 5 + '칸)' : '';
+  }
+  function openEdit(s, preset) {
+    editing = s;
+    lastFocus = document.activeElement;
+    const v = s || Object.assign({ title: '', status: 'go', memo: '' }, preset);
+    $('editTitle').textContent = s ? '세션 수정' : '세션 추가';
+    $('fTitle').value = v.title;
+    $('fDay').value = String(v.day);
+    ensureOpt($('fStart'), v.start); ensureOpt($('fEnd'), v.end);
+    document.querySelector(`input[name=st][value=${v.status}]`).checked = true;
+    $('fMemo').value = v.memo || '';
+    $('fErr').textContent = '';
+    $('delBtn').style.visibility = s ? 'visible' : 'hidden';
+    $('delBtn').textContent = '삭제';
+    delete $('delBtn').dataset.armed;
+    updDur();
+    $('editBackdrop').classList.add('open');
+    setTimeout(() => $('fTitle').focus(), 0);
+  }
+  function closeModal(id) {
+    $(id).classList.remove('open');
+    if (lastFocus && document.body.contains(lastFocus)) lastFocus.focus();
+  }
+  $('fStart').addEventListener('change', () => {
+    const st = Number($('fStart').value), en = Number($('fEnd').value);
+    if (en <= st) ensureOpt($('fEnd'), Math.min(st + 65, 22 * 60));
+    updDur();
+  });
+  $('fEnd').addEventListener('change', updDur);
+  $('cancelBtn').addEventListener('click', () => closeModal('editBackdrop'));
+  $('saveBtn').addEventListener('click', () => {
+    const title = $('fTitle').value.trim();
+    const start = Number($('fStart').value), end = Number($('fEnd').value);
+    if (!title) { $('fErr').textContent = '세션 이름을 적어 주세요.'; $('fTitle').focus(); return; }
+    if (end <= start) { $('fErr').textContent = '끝나는 시각이 시작보다 늦어야 해요.'; $('fEnd').focus(); return; }
+    const v = { title, day: Number($('fDay').value), start, end, status: document.querySelector('input[name=st]:checked').value, memo: $('fMemo').value.trim() };
+    if (editing) { Object.assign(editing, v); delete editing.prev; } else sessions.push(Object.assign({ id: uid() }, v));
+    save(); render(); closeModal('editBackdrop');
+  });
+  $('delBtn').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = '한 번 더 누르면 삭제'; return; }
+    sessions = sessions.filter(s => s !== editing);
+    save(); render(); closeModal('editBackdrop');
+  });
+  $('fTitle').addEventListener('keydown', e => { if (e.key === 'Enter') $('saveBtn').click(); });
+  $('addBtn').addEventListener('click', () => openEdit(null, { day: 0, start: 9 * 60, end: 10 * 60 + 5 }));
+
+  /* ---------- data modal ---------- */
+  $('dataBtn').addEventListener('click', () => {
+    lastFocus = document.activeElement;
+    $('dataText').value = JSON.stringify(sessions.map(({ prev, ...s }) => Object.assign({}, s, { start: fmt(s.start), end: fmt(s.end) })), null, 1);
+    $('dataMsg').textContent = '';
+    $('resetBtn').textContent = '처음 시간표로 되돌리기';
+    delete $('resetBtn').dataset.armed;
+    $('dataBackdrop').classList.add('open');
+  });
+  $('dataClose').addEventListener('click', () => closeModal('dataBackdrop'));
+  $('copyBtn').addEventListener('click', async () => {
+    const ta = $('dataText');
+    try { await navigator.clipboard.writeText(ta.value); $('dataMsg').textContent = '복사했어요.'; }
+    catch (e) { ta.focus(); ta.select(); $('dataMsg').textContent = '자동 복사가 막혀 있어요. 선택된 내용을 직접 복사해 주세요.'; }
+  });
+  $('applyBtn').addEventListener('click', () => {
+    try {
+      const arr = JSON.parse($('dataText').value);
+      const list = arr.map((s, i) => ({ id: s.id || uid() + i, day: Number(s.day), title: String(s.title || ''), status: s.status, memo: s.memo || '',
+        start: typeof s.start === 'string' ? toMin(s.start) : s.start, end: typeof s.end === 'string' ? toMin(s.end) : s.end }));
+      if (!valid(list)) throw new Error('bad');
+      sessions = list; save(); render(); closeModal('dataBackdrop');
+    } catch (e) { $('dataMsg').textContent = '형식이 맞지 않아요. 복사해 둔 백업 내용을 그대로 붙여넣어 주세요.'; }
+  });
+  $('resetBtn').addEventListener('click', e => {
+    const b = e.currentTarget;
+    if (!b.dataset.armed) { b.dataset.armed = '1'; b.textContent = '한 번 더 누르면 초기화'; return; }
+    sessions = defaults(); hideSkip = false; save(); render(); closeModal('dataBackdrop');
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Escape') return;
+    ['editBackdrop', 'dataBackdrop'].forEach(id => { if ($(id).classList.contains('open')) closeModal(id); });
+  });
+  ['editBackdrop', 'dataBackdrop'].forEach(id => $(id).addEventListener('mousedown', e => { if (e.target.id === id) closeModal(id); }));
+
+  setInterval(() => { if (klNow().day >= 0) render(); }, 60000);
+
+  /* ---------- boot ---------- */
+  function start(data) {
+    if (data && valid(data.sessions)) { sessions = data.sessions; hideSkip = !!data.hideSkip; }
+    else sessions = load() || defaults();
+    render();
+  }
+  window.claude?.hot?.snapshot(() => ({ sessions, hideSkip }));
+  window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+})();
+</script>
+</body>
+</html>
